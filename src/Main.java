@@ -51,13 +51,14 @@ public class Main {
         System.out.println("Average Age of Employees: " + averageAge);
 
         // find 3rd highest salary
-        employees.stream()
+        Double thirdHighestSalary = employees.stream()
                 .map(Employee::getSalary)
                 .distinct()
                 .sorted(Comparator.reverseOrder())
                 .skip(2)
                 .findFirst()
-                .ifPresent(s-> System.out.println("3rd highest salary: " + s));
+                .get();
+        System.out.println("3rd highest salary: " + thirdHighestSalary);
 
         // list employess whose salary in between 55000 to 75000
         List<String> employeeSalaryRange = employees.stream()
@@ -72,8 +73,25 @@ public class Main {
         System.out.println("Group Employees based on Department: " + groupByDepartment);
 
         // group emloyees based on salary and return map with salary as key and list of employee name as value
-        Map<Double, List<String>> groupBySalary = employees.stream().collect(Collectors.groupingBy(Employee::getSalary, Collectors.mapping(Employee::getName, Collectors.toList())));
+        Map<Double, List<String>> groupBySalary = employees.stream()
+                .collect(Collectors.groupingBy(Employee::getSalary, Collectors.mapping(Employee::getName, Collectors.toList())));
         System.out.println("Group Employees based on Salary: " + groupBySalary);
+
+        // find List of all employees name with third-highest salary
+        Map.Entry<Double, List<String>> collect = groupBySalary.entrySet().stream()
+                .sorted(Map.Entry.<Double, List<String>>comparingByKey().reversed())
+                .skip(2)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No third-highest salary found"));
+        System.out.println("List of all employees name with third-highest salary: " + collect);
+
+        // Another way to find List of employees with third-Highest salary
+        List<String> collect1 = employees.stream()
+                .filter(e -> Objects.equals(e.getSalary(), thirdHighestSalary))
+                .map(Employee::getName)
+                .collect(Collectors.toList());
+        System.out.println("List of employees with third-Highest salary: " + collect1);
+
     }
 }
 

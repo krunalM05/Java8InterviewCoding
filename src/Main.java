@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -91,6 +92,30 @@ public class Main {
                 .map(Employee::getName)
                 .collect(Collectors.toList());
         System.out.println("List of employees with third-Highest salary: " + collect1);
+
+
+        String sentence = "I am a student of Computer Science";
+
+        // find duplicate characters from sentence
+        Map<Character, Long> duplicateChar = sentence.toLowerCase().chars().mapToObj(c -> (char) c)
+                .filter(c -> c != ' ' && c != '\n' && c != '\t')
+                .collect(Collectors.groupingBy(Function.identity(),LinkedHashMap::new, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue() > 1)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        System.out.println("Duplicate characters from sentence: " + duplicateChar);
+
+        // find first non repeating character
+        Arrays.stream(sentence.toLowerCase().split(""))
+                .filter(c -> c != " ")
+                .collect(Collectors.groupingBy(c->c,LinkedHashMap::new,Collectors.counting()))
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue() == 1)
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .ifPresent(System.out::println);
 
     }
 }
